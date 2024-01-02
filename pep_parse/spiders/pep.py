@@ -14,10 +14,14 @@ class PepSpider(scrapy.Spider):
             yield response.follow(pep_url, callback=self.parse_pep)
 
     def parse_pep(self, response):
+
         raw = response.css('h1.page-title::text').get().split(' – ')
+        status_raw = response.css('dt:contains("Status") + dd')
+        status = status_raw.css('abbr::text').get()
+
         data = {
             'number': raw[0][4:],
             'name': raw[1],
-            'status': response.css('dt:contains("Status") + dd::text').get()
+            'status': status,
         }
         yield PepParseItem(data)
