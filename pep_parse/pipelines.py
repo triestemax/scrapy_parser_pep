@@ -1,25 +1,12 @@
 import datetime as dt
 import os
 
-from sqlalchemy import create_engine, Column, Integer, String
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import Session
+
 from pathlib import Path
 
 
 BASE_DIR = Path(__file__).parent.parent / 'results'
 DATE = dt.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-
-
-Base = declarative_base()
-
-
-class Pep(Base):
-    __tablename__ = 'pep'
-    id = Column(Integer, primary_key=True)
-    number = Column(Integer)
-    name = Column(String(200))
-    status = Column(String(50))
 
 
 class PepParsePipeline:
