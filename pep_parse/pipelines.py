@@ -33,4 +33,3 @@ class PepParsePipeline:
             for key, value in self.results.items():
                 file.write(f'{key},{value}\n')
             file.write(f'Total,{sum(self.results.values())}')
-        self.session.close()
