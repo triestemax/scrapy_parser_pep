@@ -1,12 +1,14 @@
 import datetime as dt
+import os
+
 from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import Session
 from pathlib import Path
 
 
-BASE_DIR = Path(__file__).absolute().parent
-DATE = dt.datetime.now().strftime('%Y-%m-%dT%H-%M-%S')
+BASE_DIR = Path(__file__).parent.parent / 'results'
+DATE = dt.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
 
 
 Base = declarative_base()
@@ -28,22 +30,28 @@ class PepParsePipeline:
         self.results = {}
 
     def process_item(self, item, spider):
-        if item["status"] not in self.results:
-            self.results[item["status"]] = 1
+        if item['status'] not in self.results:
+            self.results[item['status']] = 1
         else:
-            self.results[item["status"]] += 1
+            self.results[item['status']] += 1
         pep = Pep(
-            number=item["number"], name=item["name"], status=item["status"]
+            number=item['number'], name=item['name'], status=item['status']
         )
         self.session.add(pep)
         self.session.commit()
         return item
 
     def close_spider(self, spider):
-        filename = BASE_DIR / f"results/status_summary_{DATE}.csv"
-        with open(filename, mode="w", encoding="utf-8") as file:
-            file.write("Статус,Количество\n")
+        if not os.path.exists(BASE_DIR):
+            os.makedirs(BASE_DIR)
+        file_name = f'status_summary_{DATE}.csv'
+        with open(
+            os.path.join(BASE_DIR, file_name),
+            mode='w',
+            encoding='utf-8'
+        ) as file:
+            file.write('Статус,Количество\n')
             for key, value in self.results.items():
-                file.write(f"{key},{value}\n")
-            file.write(f"Total,{sum(self.results.values())}")
+                file.write(f'{key},{value}\n')
+            file.write(f'Total,{sum(self.results.values())}')
         self.session.close()
