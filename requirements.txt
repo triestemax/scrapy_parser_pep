@@ -41,7 +41,7 @@ queuelib==1.6.2
 Scrapy==2.5.1
 service-identity==21.1.0
 six==1.16.0
-SQLAlchemy==2.0.23
+sqlalchemy==2.0.23
 toml==0.10.2
 Twisted==22.2.0
 twisted-iocpsupport==1.0.4
