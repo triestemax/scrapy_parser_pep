@@ -24,9 +24,8 @@ class Pep(Base):
 
 class PepParsePipeline:
     def open_spider(self, spider):
-        engine = create_engine('sqlite:///results/sqlite.db')
-        Base.metadata.create_all(engine)
-        self.session = Session(engine)
+        if not os.path.exists(BASE_DIR):
+            os.makedirs(BASE_DIR)
         self.results = {}
 
     def process_item(self, item, spider):
@@ -34,16 +33,9 @@ class PepParsePipeline:
             self.results[item['status']] = 1
         else:
             self.results[item['status']] += 1
-        pep = Pep(
-            number=item['number'], name=item['name'], status=item['status']
-        )
-        self.session.add(pep)
-        self.session.commit()
         return item
 
     def close_spider(self, spider):
-        if not os.path.exists(BASE_DIR):
-            os.makedirs(BASE_DIR)
         file_name = f'status_summary_{DATE}.csv'
         with open(
             os.path.join(BASE_DIR, file_name),
