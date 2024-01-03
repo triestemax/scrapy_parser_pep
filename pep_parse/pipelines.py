@@ -1,3 +1,4 @@
+import csv
 import datetime as dt
 import os
 
@@ -29,7 +30,8 @@ class PepParsePipeline:
             mode='w',
             encoding='utf-8'
         ) as file:
+            print(self.results)
             file.write('Статус,Количество\n')
-            for key, value in self.results.items():
-                file.write(f'{key},{value}\n')
-            file.write(f'Total,{sum(self.results.values())}')
+            writer = csv.writer(file)
+            writer.writerows(self.results.items())
+            file.write(f'Total,{sum(self.results.values())}\n')
