@@ -17,9 +17,8 @@ class PepParsePipeline:
         self.results = {}
 
     def process_item(self, item, spider):
-        status = self.results.setdefault(item['status'], 0)
-        if status is not None:
-            self.results[item['status']] += 1
+        self.results.setdefault(item['status'], 0)
+        self.results[item['status']] += 1
         return item
 
     def close_spider(self, spider):
