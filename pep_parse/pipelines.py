@@ -17,9 +17,8 @@ class PepParsePipeline:
         self.results = {}
 
     def process_item(self, item, spider):
-        if item['status'] not in self.results:
-            self.results[item['status']] = 1
-        else:
+        status = self.results.setdefault(item['status'], 0)
+        if status is not None:
             self.results[item['status']] += 1
         return item
 
@@ -30,7 +29,6 @@ class PepParsePipeline:
             mode='w',
             encoding='utf-8'
         ) as file:
-            print(self.results)
             file.write('Статус,Количество\n')
             writer = csv.writer(file)
             writer.writerows(self.results.items())
